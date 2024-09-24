@@ -1,0 +1,21 @@
+FROM python:3.9-slim
+
+# Install dependencies
+RUN pip install transformers torch
+
+# Download the Hugging Face model and dataset in the Docker build process
+RUN pip install datasets
+
+# Create a working directory
+WORKDIR /app
+
+# Fetch the dataset/model from Hugging Face
+RUN python -c "from transformers import AutoModelForTokenClassification, AutoTokenizer;\
+  model = AutoModelForTokenClassification.from_pretrained('elenanereiss/bert-german-ler');\
+  tokenizer = AutoTokenizer.from_pretrained('elenanereiss/bert-german-ler')"
+
+# Expose the port (if you plan to serve the model)
+EXPOSE 5000
+
+# Start the service (e.g., a FastAPI or Flask app to expose the model API)
+CMD ["python", "app.py"]
